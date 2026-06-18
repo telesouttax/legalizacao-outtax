@@ -101,8 +101,20 @@ export default function AlteracaoContratual() {
 
       const webhookUrl = isTestMode ? WEBHOOK_TEST : WEBHOOK_PROD;
 
-      // 1. Envia para webhook principal (backend cria tarefa no Google Tasks)
-      const response = await fetch(webhookUrl, {
+      // 1. Notifica Google Chat (principal — não depende do backend)
+      const chatOk = await sendGoogleChatNotification({
+        empresa: dadosEmpresa.razaoSocial,
+        cnpj: dadosEmpresa.cnpj,
+        alteracoes,
+        dataEnvio: formData.dataEnvio,
+      });
+
+      if (!chatOk) {
+        console.warn('Falha ao notificar Google Chat');
+      }
+
+      // 2. Envia para webhook (secundário — não bloqueia o sucesso)
+      fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -112,21 +124,7 @@ export default function AlteracaoContratual() {
           isTestMode,
           timestamp: new Date().toISOString(),
         }),
-      });
-
-      if (!response.ok) throw new Error('Erro ao enviar formulário');
-
-      // 2. Notifica Google Chat (direto do frontend, não depende do backend)
-      const chatOk = await sendGoogleChatNotification({
-        empresa: dadosEmpresa.razaoSocial,
-        cnpj: dadosEmpresa.cnpj,
-        alteracoes,
-        dataEnvio: formData.dataEnvio,
-      });
-
-      if (!chatOk) {
-        console.warn('Falha ao notificar Google Chat — formulário enviado com sucesso');
-      }
+      }).catch((err) => console.warn('Webhook indisponível:', err));
 
       setIsSuccess(true);
       toast.success('Formulário enviado com sucesso!');
