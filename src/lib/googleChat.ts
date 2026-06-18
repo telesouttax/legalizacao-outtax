@@ -22,60 +22,36 @@ export async function sendGoogleChatNotification(payload: ChatNotificationPayloa
 
   const listaAlteracoes = alteracoes.map(a => `• ${a}`).join('\n');
 
-  const mensagem = {
-    cards: [
-      {
-        header: {
-          title: '🔔 Nova Solicitação de Alteração Contratual',
-          subtitle: formatDateBR(dataEnvio),
-          imageUrl: 'https://www.gstatic.com/images/icons/material/system/2x/description_black_48dp.png',
-        },
-        sections: [
-          {
-            widgets: [
-              {
-                keyValue: {
-                  topLabel: 'Empresa',
-                  content: empresa,
-                  icon: 'BUILDING_STORE',
-                },
-              },
-              {
-                keyValue: {
-                  topLabel: 'CNPJ',
-                  content: cnpj,
-                  icon: 'DESCRIPTION',
-                },
-              },
-              {
-                textParagraph: {
-                  text: `<b>Alterações solicitadas:</b>\n${listaAlteracoes}`,
-                },
-              },
-            ],
-          },
-          {
-            widgets: [
-              {
-                textParagraph: {
-                  text: `<users/tfvIlyAAAAE> nova solicitação aguardando legalização! 🚀`,
-                },
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  };
+  // Formato texto simples — funciona com qualquer webhook do Google Chat
+  const text = [
+    `🔔 *Nova Solicitação de Alteração Contratual*`,
+    ``,
+    `*Empresa:* ${empresa}`,
+    `*CNPJ:* ${cnpj}`,
+    `*Data:* ${formatDateBR(dataEnvio)}`,
+    ``,
+    `*Alterações solicitadas:*`,
+    listaAlteracoes,
+    ``,
+    `<users/tfvIlyAAAAE> nova solicitação aguardando legalização! 🚀`,
+  ].join('\n');
 
   try {
     const response = await fetch(GOOGLE_CHAT_WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(mensagem),
+      body: JSON.stringify({ text }),
     });
-    return response.ok;
-  } catch {
+
+    if (!response.ok) {
+      const erro = await response.text();
+      console.error('Google Chat erro:', response.status, erro);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Google Chat exceção:', err);
     return false;
   }
 }
