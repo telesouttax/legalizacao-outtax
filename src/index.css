@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 97%;
+    --foreground: 220 43% 26%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 43% 26%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 43% 26%;
+
+    --primary: 220 68% 25%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 218 55% 38%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 20% 92%;
+    --muted-foreground: 220 20% 40%;
+
+    --accent: 28 100% 59%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 220 68% 25%;
+
+    --radius: 0.5rem;
+
+    --test-banner: 28 100% 59%;
+  }
+
+  .dark {
+    --background: 220 43% 11%;
+    --foreground: 0 0% 98%;
+
+    --card: 220 43% 15%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 220 43% 15%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 218 55% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 68% 35%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 20% 20%;
+    --muted-foreground: 220 20% 60%;
+
+    --accent: 28 100% 59%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 20% 25%;
+    --input: 220 20% 25%;
+    --ring: 218 55% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .test-banner {
+    @apply bg-accent text-accent-foreground py-2 px-4 text-center text-sm font-medium;
+  }
+}
